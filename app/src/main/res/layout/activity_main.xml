@@ -27,7 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            app:tabSelectedTextColor="@color/design_default_color_background"/>
+            app:tabSelectedTextColor="@color/design_default_color_background"
+            app:tabGravity="fill"
+            app:tabMaxWidth="0dp"/>
     </com.google.android.material.appbar.AppBarLayout>
 
 
