@@ -6,25 +6,24 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import com.example.videorecordingapp.ui.main.SectionsPagerAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.example.videorecordingapp.ui.main.TabAdapter
+import com.google.android.material.tabs.TabLayoutMediator
+
+val TAB_TITLES = arrayOf("Record", "Saved Recordings")
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
+        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        viewPager.adapter = TabAdapter(this)
         val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
-        val fab: FloatingActionButton = findViewById(R.id.fab)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        TabLayoutMediator(tabs, viewPager){ tab: TabLayout.Tab, i: Int ->
+            tab.text = TAB_TITLES[i]
+        }.attach()
+
     }
 }
