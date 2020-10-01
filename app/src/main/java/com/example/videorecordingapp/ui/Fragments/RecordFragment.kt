@@ -60,7 +60,7 @@ class RecordFragment:Fragment() {
         btnRecord.setOnClickListener {
             val recordingName = etRecordingName.text.toString()
             if (recordingName.isEmpty()){
-                etRecordingName.error = ""
+                etRecordingName.error = "Recording Name cannot be empty"
             }
             else{
                 etRecordingName.error = null
