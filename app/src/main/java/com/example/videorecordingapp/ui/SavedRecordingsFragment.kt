@@ -1,4 +1,4 @@
-package com.example.videorecordingapp.ui.main
+package com.example.videorecordingapp.ui
 
 import androidx.fragment.app.Fragment
 

@@ -1,4 +1,4 @@
-package com.example.videorecordingapp.ui.main
+package com.example.videorecordingapp.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
