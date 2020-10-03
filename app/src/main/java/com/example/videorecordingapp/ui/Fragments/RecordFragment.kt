@@ -46,15 +46,10 @@ class RecordFragment:Fragment() {
             }
             else{
                 etRecordingName.error = null
-                var oldSavedRecordings = vm.savedRecordings.value
-                if (oldSavedRecordings == null){
-                    oldSavedRecordings = ArrayList()
-
-                }
-                oldSavedRecordings.add(RecordingData(recordingName,
+                val newRecording = RecordingData(recordingName,
                     sliderRecordingTime.value.toInt(),
-                    Timestamp(System.currentTimeMillis())))
-                vm.savedRecordings.value = oldSavedRecordings
+                    Timestamp(System.currentTimeMillis()))
+                vm.addRecording(newRecording)
                 Toast.makeText(requireContext(),"$recordingName will be recorded for " +
                         "${tvMinutesSelected.text} mins and ${tvSecondsSelected.text} seconds",
                     Toast.LENGTH_LONG).show()
