@@ -3,7 +3,9 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="record">Record</string>
-    <string name="recording_name">Recording Name</string>
+    <string name="recording_name">Recording Title</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
+    <string name="recording_timestamp">Timestamp</string>
+    <string name="recording_duration">Duration</string>
 </resources>
