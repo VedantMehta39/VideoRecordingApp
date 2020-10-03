@@ -12,10 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.videorecordingapp.R
-import com.example.videorecordingapp.ui.ViewModels.RecordTabViewModel
+import com.example.videorecordingapp.models.RecordingData
+import com.example.videorecordingapp.ui.ViewModels.MainActivityViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputEditText
+import java.sql.Timestamp
 
 class RecordFragment:Fragment() {
     override fun onCreateView(
@@ -25,36 +27,16 @@ class RecordFragment:Fragment() {
     ) = inflater.inflate(R.layout.tab_record_fragment,container,false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vm = ViewModelProvider(this).get(RecordTabViewModel::class.java)
-
-
+        val vm = ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
         val etRecordingName = view.findViewById<TextInputEditText>(R.id.recording_name)
         val tvMinutesSelected = view.findViewById<TextView>(R.id.recording_time_in_min)
         val tvSecondsSelected = view.findViewById<TextView>(R.id.recording_time_in_sec)
         val sliderRecordingTime = view.findViewById<Slider>(R.id.recording_time_slider)
         val btnRecord = view.findViewById<MaterialButton>(R.id.btn_record)
 
-        etRecordingName.addTextChangedListener(object: TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun afterTextChanged(text: Editable?) {
-                vm.recordingName = text.toString()
-            }
-
-        })
-
-        vm.recordingTimeLimit.observe(viewLifecycleOwner, {seconds ->
-            tvMinutesSelected.text = (seconds/60).toString()
-            tvSecondsSelected.text = (seconds%60).toString()
-        })
-
-
         sliderRecordingTime.addOnChangeListener(Slider.OnChangeListener { _, value, _ ->
-            vm.recordingTimeLimit.value = value.toInt()
+            tvMinutesSelected.text = (value/60).toInt().toString()
+            tvSecondsSelected.text = (value%60).toInt().toString()
         })
 
         btnRecord.setOnClickListener {
@@ -64,6 +46,15 @@ class RecordFragment:Fragment() {
             }
             else{
                 etRecordingName.error = null
+                var oldSavedRecordings = vm.savedRecordings.value
+                if (oldSavedRecordings == null){
+                    oldSavedRecordings = ArrayList()
+
+                }
+                oldSavedRecordings.add(RecordingData(recordingName,
+                    sliderRecordingTime.value.toInt(),
+                    Timestamp(System.currentTimeMillis())))
+                vm.savedRecordings.value = oldSavedRecordings
                 Toast.makeText(requireContext(),"$recordingName will be recorded for " +
                         "${tvMinutesSelected.text} mins and ${tvSecondsSelected.text} seconds",
                     Toast.LENGTH_LONG).show()
