@@ -37,6 +37,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/recording_time_in_min"
+            android:text="@string/min_duration_in_mins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
@@ -56,6 +57,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/recording_time_in_sec"
+            android:text="@string/min_duration_in_secs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"

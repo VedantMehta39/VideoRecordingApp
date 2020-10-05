@@ -8,4 +8,6 @@
     <string name="seconds">Seconds</string>
     <string name="recording_timestamp">Timestamp</string>
     <string name="recording_duration">Duration</string>
+    <string name="min_duration_in_secs">15</string>
+    <string name="min_duration_in_mins">0</string>
 </resources>
