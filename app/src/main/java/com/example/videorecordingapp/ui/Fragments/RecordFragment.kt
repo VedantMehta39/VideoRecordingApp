@@ -1,5 +1,6 @@
 package com.example.videorecordingapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -50,6 +51,10 @@ class RecordFragment:Fragment() {
                     sliderRecordingTime.value.toInt(),
                     Timestamp(System.currentTimeMillis()))
                 vm.addRecording(newRecording)
+                val intent = Intent(context,VideoRecordingActivity::class.java)
+                intent.putExtra("RECORDING_TITLE", newRecording.name)
+                intent.putExtra("RECORDING_DURATION", newRecording.duration)
+                startActivity(intent)
                 Toast.makeText(requireContext(),"$recordingName will be recorded for " +
                         "${tvMinutesSelected.text} mins and ${tvSecondsSelected.text} seconds",
                     Toast.LENGTH_LONG).show()
