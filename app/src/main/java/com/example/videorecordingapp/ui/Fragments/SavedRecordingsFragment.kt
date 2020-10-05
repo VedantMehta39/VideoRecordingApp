@@ -19,7 +19,7 @@ class SavedRecordingsFragment:Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.tab_saved_recordings, container, false)
+    ) = inflater.inflate(R.layout.tab_saved_recordings_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vm = ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
