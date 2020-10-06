@@ -8,6 +8,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.VideoCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.common.util.concurrent.ListenableFuture
 import java.lang.Exception
@@ -15,16 +16,19 @@ import java.lang.Exception
 
 class MyVideoCamera(var activity:AppCompatActivity) {
 
-    var isCameraBound = MutableLiveData(false)
-    private var cameraProviderFuture = getCamera()
+    private var _isCameraBound = MutableLiveData(false)
+    val isCameraBound:LiveData<Boolean>
+    get() = _isCameraBound
+
+    private var _cameraProviderFuture = getCamera()
 
     private fun getCamera():ListenableFuture<ProcessCameraProvider> = ProcessCameraProvider.getInstance(activity)
 
     @SuppressLint("RestrictedApi")
     fun bindToCamera(previewUseCase:Preview, videoCaptureUseCase:VideoCapture){
-        cameraProviderFuture.addListener(Runnable {
+        _cameraProviderFuture.addListener(Runnable {
             // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val cameraProvider: ProcessCameraProvider = _cameraProviderFuture.get()
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -40,7 +44,7 @@ class MyVideoCamera(var activity:AppCompatActivity) {
             } catch(exc: Exception) {
                 Log.e("VideoRecordingActivity", "Use case binding failed", exc)
             }
-            isCameraBound.value = true
+            _isCameraBound.value = true
         }, ContextCompat.getMainExecutor(activity))
     }
 

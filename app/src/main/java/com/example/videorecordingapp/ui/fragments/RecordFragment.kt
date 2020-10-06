@@ -2,19 +2,15 @@ package com.example.videorecordingapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.videorecordingapp.R
 import com.example.videorecordingapp.models.RecordingData
-import com.example.videorecordingapp.ui.ViewModels.MainActivityViewModel
+import com.example.videorecordingapp.ui.viewmodels.MainActivityViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputEditText
@@ -25,7 +21,7 @@ class RecordFragment:Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.tab_record_fragment,container,false)
+    ): View = inflater.inflate(R.layout.tab_record_fragment,container,false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vm = ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
@@ -51,13 +47,11 @@ class RecordFragment:Fragment() {
                     sliderRecordingTime.value.toInt(),
                     Timestamp(System.currentTimeMillis()))
                 vm.addRecording(newRecording)
+
                 val intent = Intent(context,VideoRecordingActivity::class.java)
                 intent.putExtra("RECORDING_TITLE", newRecording.name)
                 intent.putExtra("RECORDING_DURATION", newRecording.duration)
                 startActivity(intent)
-                Toast.makeText(requireContext(),"$recordingName will be recorded for " +
-                        "${tvMinutesSelected.text} mins and ${tvSecondsSelected.text} seconds",
-                    Toast.LENGTH_LONG).show()
             }
         }
 

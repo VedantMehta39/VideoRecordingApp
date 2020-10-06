@@ -1,5 +1,6 @@
 package com.example.videorecordingapp.ui
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.videorecordingapp.R
-import com.example.videorecordingapp.ui.Adapters.SavedRecordingsAdapter
-import com.example.videorecordingapp.ui.ViewModels.MainActivityViewModel
+import com.example.videorecordingapp.ui.adapters.SavedRecordingsAdapter
+import com.example.videorecordingapp.ui.viewmodels.MainActivityViewModel
 
 class SavedRecordingsFragment:Fragment() {
 
@@ -19,7 +21,7 @@ class SavedRecordingsFragment:Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.tab_saved_recordings_fragment, container, false)
+    ): View = inflater.inflate(R.layout.tab_saved_recordings_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vm = ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)

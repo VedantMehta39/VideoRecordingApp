@@ -14,6 +14,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         val viewPager: ViewPager2 = findViewById(R.id.view_pager)
         viewPager.adapter = TabAdapter(this)
         val tabs: TabLayout = findViewById(R.id.tabs)
@@ -21,6 +27,5 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(tabs, viewPager){ tab: TabLayout.Tab, i: Int ->
             tab.text = TAB_TITLES[i]
         }.attach()
-
     }
 }

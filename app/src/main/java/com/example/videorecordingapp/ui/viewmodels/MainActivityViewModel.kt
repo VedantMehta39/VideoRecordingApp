@@ -1,9 +1,8 @@
-package com.example.videorecordingapp.ui.ViewModels
+package com.example.videorecordingapp.ui.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.videorecordingapp.models.RecordingData
-import java.sql.Timestamp
 
 
 class MainActivityViewModel: ViewModel() {

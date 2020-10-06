@@ -1,4 +1,4 @@
-package com.example.videorecordingapp.ui.Adapters
+package com.example.videorecordingapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,9 @@ import com.example.videorecordingapp.R
 import com.example.videorecordingapp.models.RecordingData
 import kotlin.collections.ArrayList
 
-class SavedRecordingsAdapter(var data: ArrayList<RecordingData>):RecyclerView.Adapter<SavedRecordingsAdapter.RecordingDataViewHolder>(){
+class SavedRecordingsAdapter(var data: ArrayList<RecordingData>):
+    RecyclerView.Adapter<SavedRecordingsAdapter.RecordingDataViewHolder>(){
+
     class RecordingDataViewHolder(var view: View):RecyclerView.ViewHolder(view){
 
         fun bindData(data:RecordingData){
