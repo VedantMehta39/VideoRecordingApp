@@ -98,14 +98,20 @@ class VideoRecordingActivity:AppCompatActivity() {
     @SuppressLint("RestrictedApi")
     private fun initCamera(){
         _videoCamera = MyVideoCamera(this)
+        // Set up the preview use case
         val previewUseCase = Preview.Builder()
             .build()
             .also {
+                // Bind the preview to the SurfaceView on PreviewView
                 it.setSurfaceProvider(_videoPreviewView.surfaceProvider)
             }
+        // Set up the video capture use case
         _videoCaptureUseCase = VideoCapture.Builder().apply{
+            // Set Aspect Ratio on the recorded video thats being stored
             setTargetAspectRatio(AspectRatio.RATIO_16_9)
         }.build()
+
+        // Bind Use Cases to the camera and the camera to the activity's lifecycle
         _videoCamera.bindToCamera(previewUseCase, _videoCaptureUseCase)
     }
 

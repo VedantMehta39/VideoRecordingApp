@@ -1,4 +1,4 @@
-package com.example.videorecordingapp.ui
+package com.example.videorecordingapp.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.videorecordingapp.R
 import com.example.videorecordingapp.models.RecordingData
+import com.example.videorecordingapp.ui.VideoRecordingActivity
 import com.example.videorecordingapp.ui.viewmodels.MainActivityViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
@@ -48,7 +49,7 @@ class RecordFragment:Fragment() {
                     Timestamp(System.currentTimeMillis()))
                 vm.addRecording(newRecording)
 
-                val intent = Intent(context,VideoRecordingActivity::class.java)
+                val intent = Intent(context, VideoRecordingActivity::class.java)
                 intent.putExtra("RECORDING_TITLE", newRecording.name)
                 intent.putExtra("RECORDING_DURATION", newRecording.duration)
                 startActivity(intent)

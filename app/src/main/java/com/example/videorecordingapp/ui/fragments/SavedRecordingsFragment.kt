@@ -1,6 +1,5 @@
-package com.example.videorecordingapp.ui
+package com.example.videorecordingapp.ui.fragments
 
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.videorecordingapp.R
 import com.example.videorecordingapp.ui.adapters.SavedRecordingsAdapter
 import com.example.videorecordingapp.ui.viewmodels.MainActivityViewModel
