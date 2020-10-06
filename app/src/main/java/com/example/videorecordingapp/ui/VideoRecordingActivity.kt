@@ -6,10 +6,8 @@ import android.content.pm.PackageManager
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
 import android.util.Log
 import android.view.OrientationEventListener
-import android.view.Surface
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.videorecordingapp.R
 import com.example.videorecordingapp.models.MyVideoCamera
-import com.google.android.material.snackbar.Snackbar
+import com.example.videorecordingapp.models.RecordingData
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,35 +28,34 @@ import java.util.concurrent.Executors
 
 class VideoRecordingActivity:AppCompatActivity() {
 
-    private lateinit var videoCamera:MyVideoCamera
+    private lateinit var _videoCamera:MyVideoCamera
 
-    private lateinit var videoPreviewView:PreviewView
+    private lateinit var _videoCaptureUseCase: VideoCapture
 
-    private lateinit var tvCountdownTimer:TextView
+    private lateinit var _videoPreviewView:PreviewView
 
-    private lateinit var videoCaptureUseCase: VideoCapture
+    private lateinit var _tvCountdownTimer:TextView
 
-    private lateinit var cameraExecutor:ExecutorService
+    private var _cameraExecutor:ExecutorService = Executors.newSingleThreadExecutor()
 
-    private var recordingDurationRemaining = 0
+    private var _recordingDurationRemaining = 0
 
-    private var recordingTitle = ""
+    private var _recordingTitle = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.video_recording_preview)
 
-        videoPreviewView = findViewById(R.id.video_recording_preview)
+        _videoPreviewView = findViewById(R.id.video_recording_preview)
 
-        tvCountdownTimer = findViewById(R.id.video_recording_countdown_timer)
+        _tvCountdownTimer = findViewById(R.id.video_recording_countdown_timer)
 
         if (savedInstanceState == null){
-            recordingDurationRemaining = intent.getIntExtra("RECORDING_DURATION",15)
-            recordingTitle = intent.getStringExtra("RECORDING_TITLE")?:""
+            _recordingDurationRemaining = intent.getIntExtra("RECORDING_DURATION",
+                RecordingData.MIN_RECORDING_TIME)
+            _recordingTitle = intent.getStringExtra("RECORDING_TITLE")?:""
         }
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onStart() {
@@ -75,7 +72,7 @@ class VideoRecordingActivity:AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing){
-            cameraExecutor.shutdown()
+            _cameraExecutor.shutdown()
         }
     }
 
@@ -100,28 +97,28 @@ class VideoRecordingActivity:AppCompatActivity() {
 
     @SuppressLint("RestrictedApi")
     private fun initCamera(){
-        videoCamera = MyVideoCamera(this)
+        _videoCamera = MyVideoCamera(this)
         val previewUseCase = Preview.Builder()
             .build()
             .also {
-                it.setSurfaceProvider(videoPreviewView.surfaceProvider)
+                it.setSurfaceProvider(_videoPreviewView.surfaceProvider)
             }
-        videoCaptureUseCase = VideoCapture.Builder().apply{
+        _videoCaptureUseCase = VideoCapture.Builder().apply{
             setTargetAspectRatio(AspectRatio.RATIO_16_9)
         }.build()
-        videoCamera.bindToCamera(previewUseCase, videoCaptureUseCase)
+        _videoCamera.bindToCamera(previewUseCase, _videoCaptureUseCase)
     }
 
     @SuppressLint("RestrictedApi")
     private fun startVideoRecording(outputFileOptions: VideoCapture.OutputFileOptions){
         initCamera()
-        videoCamera.isCameraBound.observe(this, {isBound ->
+        _videoCamera.isCameraBound.observe(this, { isBound ->
             if (isBound){
-                videoCaptureUseCase.startRecording(outputFileOptions, cameraExecutor, object : VideoCapture.OnVideoSavedCallback{
+                _videoCaptureUseCase.startRecording(outputFileOptions, _cameraExecutor, object : VideoCapture.OnVideoSavedCallback{
                     override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                         runOnUiThread{
                             Toast.makeText(this@VideoRecordingActivity,
-                                "$recordingTitle saved at ${outputFileResults.savedUri}",
+                                "$_recordingTitle saved at ${outputFileResults.savedUri}",
                                 Toast.LENGTH_LONG).show()
                         }
                     }
@@ -135,55 +132,57 @@ class VideoRecordingActivity:AppCompatActivity() {
                     }
 
                 })
-
-                handleOrientationChange()
-
-                val timer = object: CountDownTimer(recordingDurationRemaining * 1000L,
-                    1 * 1000){
-                    override fun onTick(remaingTimeInMilliSeconds: Long) {
-                        val remainingTimeInSecs = remaingTimeInMilliSeconds / 1000
-                        recordingDurationRemaining = remainingTimeInSecs.toInt()
-                        val remainingTime = "${recordingDurationRemaining / 60}:" +
-                                String.format("%02d", (recordingDurationRemaining % 60))
-                        tvCountdownTimer.text = remainingTime
-                    }
-
-                    override fun onFinish() {
-                        endRecording()
-                    }
-
-                }
-                timer.start()
+                updateUIOnOrientationChange()
+                startCountDown()
             }
         })
     }
 
     @SuppressLint("RestrictedApi")
     private fun endRecording() {
-        videoCaptureUseCase.stopRecording()
+        if(::_videoCaptureUseCase.isInitialized){
+            _videoCaptureUseCase.stopRecording()
+        }
         finish()
     }
 
-    private fun handleOrientationChange(){
+    private fun startCountDown(){
+        val timer = object: CountDownTimer(_recordingDurationRemaining * 1000L,
+            1 * 1000){
+            override fun onTick(remaingTimeInMilliSeconds: Long) {
+                val remainingTimeInSecs = remaingTimeInMilliSeconds / 1000
+                _recordingDurationRemaining = remainingTimeInSecs.toInt()
+                val remainingTime = "${_recordingDurationRemaining / 60}:" +
+                        String.format("%02d", (_recordingDurationRemaining % 60))
+                _tvCountdownTimer.text = remainingTime
+            }
+
+            override fun onFinish() {
+                endRecording()
+            }
+
+        }
+        timer.start()
+    }
+
+    private fun updateUIOnOrientationChange(){
         val orientationEventListener = object : OrientationEventListener(this,SensorManager.SENSOR_DELAY_NORMAL){
             @SuppressLint("RestrictedApi")
             override fun onOrientationChanged(newOrientation: Int) {
-                val rotation = when (newOrientation) {
-                    in 45..134 -> {
-                        Surface.ROTATION_270
+                _tvCountdownTimer.rotation = when (newOrientation) {
+                    in 0..89 -> {
+                        0f
                     }
-                    in 135..224 -> {
-                        Surface.ROTATION_180
+                    in 90..179 -> {
+                        -90f
                     }
-                    in 225..314 -> {
-                        Surface.ROTATION_90
+                    in 270..360 -> {
+                        -270f
                     }
-                    else -> {
-                        Surface.ROTATION_0
+                    else ->{
+                        _tvCountdownTimer.rotation
                     }
                 }
-                videoCaptureUseCase.setTargetRotation(rotation)
-
             }
 
         }
@@ -198,7 +197,7 @@ class VideoRecordingActivity:AppCompatActivity() {
     }
 
     private fun getOutputFile() = File(getOutputDirectory(),
-        recordingTitle + SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+        _recordingTitle + SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis()) + ".mp4")
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
